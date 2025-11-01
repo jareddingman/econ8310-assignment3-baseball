@@ -1,0 +1,80 @@
+import os
+import xml.etree.ElementTree as ET
+from PIL import Image
+import torch
+from torch.utils.data import Dataset
+import torchvision.transforms as transforms
+
+class CustomBaseball(Dataset):
+    def __init__(self, frames_root, xml_folder, transform=None):
+        self.frames_root = frames_root
+        self.annotations = self.parse_cvat_folder(xml_folder)
+        self.transform = transform or transforms.Compose([
+            transforms.Resize((128,128)),
+            transforms.ToTensor()
+        ])
+
+        # Filter out missing frames
+        valid_annotations = []
+        for ann in self.annotations:
+            video_folder = os.path.join(self.frames_root, ann['video_file'])
+            if not os.path.exists(video_folder):
+                # Try to match folder ignoring case
+                folders = os.listdir(self.frames_root)
+                match = [f for f in folders if ann['video_file'].lower() in f.lower()]
+                if match:
+                    video_folder = os.path.join(self.frames_root, match[0])
+                    ann['video_file'] = match[0]
+                else:
+                    continue
+
+            frame_path = os.path.join(video_folder, f"frame_{ann['frame']:04d}.jpg")
+            if os.path.exists(frame_path):
+                valid_annotations.append(ann)
+
+        self.annotations = valid_annotations
+        print(f"Total valid annotations: {len(self.annotations)}")
+
+    def parse_cvat_folder(self, xml_folder):
+        all_annotations = []
+        for file in os.listdir(xml_folder):
+            if file.endswith(".xml"):
+                xml_path = os.path.join(xml_folder, file)
+                tree = ET.parse(xml_path)
+                root = tree.getroot()
+                for track in root.findall('track'):
+                    label = track.attrib['label']
+                    track_id = int(track.attrib['id'])
+                    for box in track.findall('box'):
+                        frame = int(box.attrib['frame'])
+                        outside = int(box.attrib['outside'])
+                        if outside == 1:
+                            continue
+                        xtl = float(box.attrib['xtl'])
+                        ytl = float(box.attrib['ytl'])
+                        xbr = float(box.attrib['xbr'])
+                        ybr = float(box.attrib['ybr'])
+                        all_annotations.append({
+                            'track_id': track_id,
+                            'label': label,
+                            'frame': frame,
+                            'bbox': [xtl, ytl, xbr, ybr],
+                            'video_file': file.replace('.xml','')
+                        })
+        return all_annotations
+
+    def __len__(self):
+        return len(self.annotations)
+
+    def __getitem__(self, idx):
+        ann = self.annotations[idx]
+        video_folder = os.path.join(self.frames_root, ann['video_file'])
+        frame_filename = f"frame_{ann['frame']:04d}.jpg"
+        img_path = os.path.join(video_folder, frame_filename)
+
+        image = Image.open(img_path).convert("RGB")
+        xtl, ytl, xbr, ybr = ann['bbox']
+        cropped = image.crop((xtl, ytl, xbr, ybr))
+        image_tensor = self.transform(cropped)
+        label = 1  # all baseballs
+        return image_tensor, label
