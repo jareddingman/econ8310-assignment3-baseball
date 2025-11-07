@@ -1,5 +1,7 @@
-# Assignment 3
+# Assignment 3 (Jared Dingman and Zach Edwards)
 ## Econ 8310 - Business Forecasting
+
+This is a repo for taking export CVAT xml files in conjunction with frames to make "Baseball" predictions. Dusty, please see the file marked assingment3.py for our graded pytorch dataloder and model.
 
 For homework assignment 3, you will work with our baseball pitch data (available in Canvas).
 
