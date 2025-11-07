@@ -3,13 +3,10 @@
 
 This is a repo for taking export CVAT xml files in conjunction with frames to make "Baseball" predictions. Dusty, please see the file marked assingment3.py for our graded pytorch dataloder and model.
 
-For homework assignment 3, you will work with our baseball pitch data (available in Canvas).
+To run the model:
+see the attached model.pt in order to load the trained model
 
-- You must create a custom data loader as described in the first week of neural network lectures to load the baseball videos [2 points]
-- You must create a working and trained neural network (any network focused on the baseball pitch videos will do) using only pytorch [2 points]
-- You must store your weights and create an import script so that I can evaluate your model without training it [2 points]
 
-Submit your forked repository URL on Canvas! :) I'll be manually grading this assignment.
 
 Some checks you can make on your own:
 - Can your custom loader import a new video or set of videos?
