@@ -5,7 +5,8 @@ This is a repo for taking export CVAT xml files in conjunction with frames to ma
 
 To run the model:
 see the attached model.pt in order to load the trained model
-
+use this link to access the video frames onedrive: https://1drv.ms/u/c/05c6d5d923208e21/EQBn9WFBmFpCh3K-y5oLeREBVM1de63H1SHe-ReVxJyWhw?e=l6T52c
+- you will need to download this if you want to run the full model
 
 
 Some checks you can make on your own:
