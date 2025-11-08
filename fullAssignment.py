@@ -91,6 +91,7 @@ class BaseballData(Dataset):
             xml_path = os.path.join(self.annotation_dir, xfile) #I hate os so much
             pair = self.matchVid(xfile, video_files = video_files)
             if pair is None:
+                print(f"no pair found for {xfile}")
                 continue
 
         video_path = os.path.join(self.video_dir, pair)
@@ -163,4 +164,5 @@ from torch.utils.data import DataLoader, random_split
 
 # train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 # val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+
 
