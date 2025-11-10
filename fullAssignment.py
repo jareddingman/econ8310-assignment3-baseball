@@ -136,6 +136,10 @@ class BaseballData(Dataset):
         label = int(label) #makes this thing an array
 
         return image, label
+'''
+The commented out section below is if you would like to get the dataset on your own computer. You need to change video_dir (a folder of raw vids) and annotation_dir(a folder of annotation xml files).
+'''
+
 from torchvision import transforms
 from torch.utils.data import DataLoader, random_split
 
@@ -164,5 +168,6 @@ from torch.utils.data import DataLoader, random_split
 
 # train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 # val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+
 
 
