@@ -2,7 +2,7 @@ import os
 import xml.etree.ElementTree as ET
 import cv2
 import torch
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader, random_split
 from torchvision import transforms
 
 class BaseballData(Dataset):
@@ -140,9 +140,6 @@ class BaseballData(Dataset):
 The commented out section below is if you would like to get the dataset on your own computer. You need to change video_dir (a folder of raw vids) and annotation_dir(a folder of annotation xml files).
 '''
 
-from torchvision import transforms
-from torch.utils.data import DataLoader, random_split
-
 # video_dir = r"C:\\Users\jared\OneDrive\Grad Year Two\Forecasting\Project_Extra\Raw Videos"
 # annotation_dir = r"C:\\Users\jared\OneDrive\Grad Year Two\Forecasting\Project_Extra\CVAT Annotations"
 
@@ -168,6 +165,7 @@ from torch.utils.data import DataLoader, random_split
 
 # train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 # val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+
 
 
 
