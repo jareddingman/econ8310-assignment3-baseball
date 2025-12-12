@@ -72,7 +72,7 @@ print(f"data.yaml created at: {yaml_path}")
 
 model = YOLO("yolov8n.pt")
 
-model.train(data="C:\\Users\jared\OneDrive\Grad Year Two\Forecasting\Project\yolo_data\data.yaml",
+model.train(data=#"C:\\Users\jared\OneDrive\Grad Year Two\Forecasting\Project\yolo_data\data.yaml", change TO YOUR DIRECTORY
             epochs = 30,
             imgsz = 640,
             batch = 8)
