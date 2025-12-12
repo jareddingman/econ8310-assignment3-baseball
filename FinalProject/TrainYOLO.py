@@ -4,6 +4,10 @@ from sklearn.model_selection import train_test_split
 import yaml
 from ultralytics import YOLO
 
+'''
+BEFORE YOU RUN!! This is designed to train a YOLO model in conjunction with the YOLO converter (see folder).
+'''
+
 project_dir = #r"C:\\Users\jared\OneDrive\Grad Year Two\Forecasting\Project" CHANGE THIS TO YOUR OWN DIRECTORY
 output_dir = os.path.join(project_dir, "yolo_data")
 
