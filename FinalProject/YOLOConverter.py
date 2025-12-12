@@ -1,9 +1,7 @@
 import os
 import xml.etree.ElementTree as ET
 import cv2
-import torch
-from torch.utils.data import Dataset, DataLoader, random_split
-from torchvision import transforms
+
 
 #CVAT to YOLO
 """
