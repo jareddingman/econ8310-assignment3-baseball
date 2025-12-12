@@ -2,6 +2,7 @@ import os
 import shutil
 from sklearn.model_selection import train_test_split
 import yaml
+from ultralytics import YOLO
 
 project_dir = #r"C:\\Users\jared\OneDrive\Grad Year Two\Forecasting\Project" CHANGE THIS TO YOUR OWN DIRECTORY
 output_dir = os.path.join(project_dir, "yolo_data")
@@ -65,3 +66,9 @@ with open(yaml_path, "w") as f:
 
 print(f"data.yaml created at: {yaml_path}")
 
+model = YOLO("yolov8n.pt")
+
+model.train(data="C:\\Users\jared\OneDrive\Grad Year Two\Forecasting\Project\yolo_data\data.yaml",
+            epochs = 30,
+            imgsz = 640,
+            batch = 8)
