@@ -76,3 +76,13 @@ model.train(data=#"C:\\Users\jared\OneDrive\Grad Year Two\Forecasting\Project\yo
             epochs = 30,
             imgsz = 640,
             batch = 8)
+
+'''
+Creates a results for testing validity of previous model
+'''
+
+# model = YOLO(r#"C:\\Users\jared\OneDrive\Grad Year Two\Forecasting\Project\best.pt") Use your own directory .pt file
+
+# # Test on a new video or image folder
+# results = model.predict(source=r"C:\Users\jared\OneDrive\Grad Year Two\Forecasting\Project_Extra\Raw Videos\IMG_7919_dusty.mov", save=True)
+
