@@ -144,7 +144,79 @@ class BaseballData(Dataset):
         height = (ybr - ytl) / img_h
 
         return x_center, y_center, width, height
+    '''
+    The function export_yolo_dataset modifies your output directory from CVAT annotations to YOLO annotations. You need to get the dataset using BaseballData() first, then use dataset.export_yolo_dataset(outputdir = "yolo_dataset")
+    '''
+    def export_yolo_dataset(self, output_dir, image_ext=".jpg"):
+        images_out = os.path.join(output_dir, "images")
+        labels_out = os.path.join(output_dir, "labels")
 
+        os.makedirs(images_out, exist_ok=True)
+        os.makedirs(labels_out, exist_ok=True)
+
+        video_files = [v for v in os.listdir(self.video_dir)
+                    if v.lower().endswith((".mp4", ".mov"))]
+        xml_files = [x for x in os.listdir(self.annotation_dir)
+                    if x.lower().endswith(".xml")]
+
+        global_label_map = {}
+        next_label_id = 0
+        image_counter = 0
+
+        for xml_file in xml_files:
+            xml_path = os.path.join(self.annotation_dir, xml_file)
+            video_name = self.matchVid(xml_file, video_files)
+
+            if video_name is None:
+                print(f"Damn. No matching video for {xml_file}")
+                continue
+
+            video_path = os.path.join(self.video_dir, video_name)
+            frames = self.getFrames(video_path)
+            frame_boxes, local_label_map = self.readDaAnnotations(xml_path)
+
+            # Sync local labels into global YOLO labels, THE REST OF THIS METHOD IS TAKEN FROM COLAB
+            for label in local_label_map:
+                if label not in global_label_map:
+                    global_label_map[label] = next_label_id
+                    next_label_id += 1
+
+            for frame_id, frame in enumerate(frames):
+                if frame_id not in frame_boxes:
+                    continue
+
+                _, img_h, img_w = frame.shape
+
+                image_name = f"frame_{image_counter:06d}{image_ext}"
+                label_name = f"frame_{image_counter:06d}.txt"
+
+                image_path = os.path.join(images_out, image_name)
+                label_path = os.path.join(labels_out, label_name)
+
+                # Save image
+                img_np = frame.permute(1, 2, 0).byte().numpy()
+                img_bgr = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)
+                cv2.imwrite(image_path, img_bgr)
+
+                # Write YOLO labels
+                with open(label_path, "w") as f:
+                    for obj in frame_boxes[frame_id]:
+                        label_id = global_label_map[
+                            list(local_label_map.keys())[obj["label"]]
+                        ]
+
+                        x, y, w, h = self.cvat_to_yolo_bbox(
+                            obj["bbox"], img_w, img_h
+                        )
+
+                        f.write(f"{label_id} {x:.6f} {y:.6f} {w:.6f} {h:.6f}\n")
+
+                image_counter += 1
+
+        print("YOLO export complete.")
+        print("Label map:")
+        for k, v in global_label_map.items():
+            print(f"{v}: {k}")
 '''
 The commented out section below is if you would like to get the dataset on your own computer. You need to change video_dir (a folder of raw vids) and annotation_dir(a folder of annotation xml files).
 '''
@@ -174,6 +246,7 @@ The commented out section below is if you would like to get the dataset on your 
 
 # train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 # val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+
 
 
 
