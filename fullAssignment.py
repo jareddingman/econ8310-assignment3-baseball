@@ -205,7 +205,7 @@ class BaseballData(Dataset):
                             list(local_label_map.keys())[obj["label"]]
                         ]
 
-                        x, y, w, h = self.cvat_to_yolo_bbox(
+                        x, y, w, h = self.makebbox(
                             obj["bbox"], img_w, img_h
                         )
 
@@ -246,6 +246,7 @@ The commented out section below is if you would like to get the dataset on your 
 
 # train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 # val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+
 
 
 
