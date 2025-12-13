@@ -136,6 +136,15 @@ class BaseballData(Dataset):
         label = int(label) #makes this thing an array
 
         return image, label
+    def makebbox(self, bbox, img_w, img_h):
+        xtl, ytl, xbr, ybr = bbox
+        x_center - ((xtl + xbr) / 2) / img_w
+        y_center = ((ytl + ybr) / 2) / img_h
+        width = (xbr - xtl) / img_w
+        height = (ybr - ytl) / img_h
+
+        return x_center, y_center, width, height
+
 '''
 The commented out section below is if you would like to get the dataset on your own computer. You need to change video_dir (a folder of raw vids) and annotation_dir(a folder of annotation xml files).
 '''
@@ -165,6 +174,7 @@ The commented out section below is if you would like to get the dataset on your 
 
 # train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 # val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+
 
 
 
