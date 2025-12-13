@@ -221,9 +221,103 @@ class BaseballData(Dataset):
         print("Label map:")
         for k, v in global_label_map.items():
             print(f"{v}: {k}")
+
+    @staticmethod #static method needs to be used for each of the below functions bc we basically there isn't a "self"
+    def splitDaData(base_dir, trainRatio=0.2):
+        #from above
+        images_dir = os.path.join(base_dir, "images")
+        labels_dir = os.path.join(base_dir, "labels")
+
+        image_files = [i for i in os.listdir(images_dir) if i.endswith(".jpg")]
+        random.shuffle(image_files)
+
+        #this part is adapted from Monte Carlo stuff I did
+        splitIndex = int(len(image_files)*(1-trainRatio))
+        trainFiles = image_files[:splitIndex] #first part
+        testFiles = image_files[splitIndex:] #last part
+
+        for split, files in [("train", trainFiles), ("val", testFiles)]:
+            os.makedirs(os.path.join(images_dir, split), exist_ok=True) #I feel good w os now!
+            os.makedirs(os.path.join(labels_dir, split), exist_ok=True)
+
+            for j in files:
+                lbl = j.replace(".jpg", ".txt")
+                shutil.move(os.path.join(images_dir, j), os.path.join(images_dir, split, j)) #def had to look this up
+                shutil.move(os.path.join(labels_dir, lbl), os.path.join(labels_dir, split, lbl))
+    @staticmethod
+    def dataYaml(output_dir, label_map):
+        yamlPath = os.path.join(output_dir, "data.yaml")
+
+        data = {
+            "path": output_dir,
+            "train": "images/train",
+            "val": "images/val",
+            "nc": len(label_map),
+            "names": {v: k for k, v in label_map.items()} #I was stuck on this for so long
+        }
+        with open(yamlPath, "w") as f:
+            yaml.dump(data, f)
+
+        print(f"data.yaml went to {yamlPath}") 
+    @staticmethod
+    def trainYOLO(data_yml, modelType = "yolov8n.pt", epochs = 2, imgsz = 640, batch = 8):
+        model = YOLO(modelType)
+
+        model.train(data=data_yml, epochs = epochs, imgsz = imgsz, batch = batch, project = "runs", name = "baseballYOLO", exist_ok = True,)
+
+
 '''
 The commented out section below is if you would like to get the dataset on your own computer. You need to change video_dir (a folder of raw vids) and annotation_dir(a folder of annotation xml files).
 '''
+if __name__ == "__main__":
+    video_dir = r"C:\\Users\\jared\\OneDrive\\Grad Year Two\\Forecasting\\Project_Extra\\Raw Videos" #Insert your own path to raw videos
+    annotation_dir = r"C:\\Users\\jared\\OneDrive\\Grad Year Two\\Forecasting\\Project_Extra\\CVAT Annotations" #Same for annotations
+    output_dir = "yolo_dataset"
+
+    dataset = BaseballData(video_dir=video_dir, annotation_dir=annotation_dir, frameRate=5)
+
+    dataset.export_yolo_dataset(output_dir=output_dir)
+
+    BaseballData.splitDaData(output_dir, trainRatio=0.2)
+
+    BaseballData.dataYaml(output_dir, dataset.label_map)
+
+    BaseballData.trainYOLO(
+        data_yml=os.path.join(output_dir, "data.yaml"),
+        modelType="yolov8n.pt",
+        epochs=2,
+        imgsz=640,
+        batch=8,
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#From assignment 3! In case it is ever needed again...
+
+
 
 # video_dir = r"C:\\Users\jared\OneDrive\Grad Year Two\Forecasting\Project_Extra\Raw Videos"
 # annotation_dir = r"C:\\Users\jared\OneDrive\Grad Year Two\Forecasting\Project_Extra\CVAT Annotations"
@@ -250,6 +344,7 @@ The commented out section below is if you would like to get the dataset on your 
 
 # train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 # val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+
 
 
 
