@@ -98,14 +98,14 @@ class BaseballData(Dataset):
                 print(f"no pair found for {xfile}")
                 continue
 
-        video_path = os.path.join(self.video_dir, pair)
-        frames = self.getFrames(video_path=video_path)
-        frameBoxes, miniLabelMap = self.readDaAnnotations(xml_path=xml_path)
-
-        for label, miniID in miniLabelMap.items(): #omg .items(), duh
-            if label not in big_label_map:
-                big_label_map[label] = next_label #this lets us iterate
-                next_label += 1
+            video_path = os.path.join(self.video_dir, pair)
+            frames = self.getFrames(video_path=video_path)
+            frameBoxes, miniLabelMap = self.readDaAnnotations(xml_path=xml_path)
+    
+            for label, miniID in miniLabelMap.items(): #omg .items(), duh
+                if label not in big_label_map:
+                    big_label_map[label] = next_label #this lets us iterate
+                    next_label += 1
 
             for frameID, frame in enumerate(frames): #thanks Ben
                 if frameID not in frameBoxes:
@@ -344,6 +344,7 @@ if __name__ == "__main__":
 
 # train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 # val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+
 
 
 
